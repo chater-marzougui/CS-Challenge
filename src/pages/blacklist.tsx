@@ -1,159 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import useBlacklist from '../hooks/useBlacklist';
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Modal,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Card,
+  CardContent,
+  Box,
+  Tooltip,
+  Alert,
+  AlertTitle,
+} from '@mui/material';
 import { Shield, User, AlertTriangle, Ban, CheckCircle } from 'lucide-react';
-import { Card, CardContent } from '@mui/material';
-import { Alert, AlertDescription } from '../components/ui/alert';
-
-const mockPosts: Post[] = [
-    {
-      id: '1',
-      name: 'Post 1',
-      text: 'This is a threat post with level 2 threat.',
-      threatLevel: 2,
-      creatorId: 'user1'
-    },
-    {
-      id: '2',
-      name: 'Post 2',
-      text: 'This is a threat post with level 4 threat.',
-      threatLevel: 4,
-      creatorId: 'user2'
-    },
-    {
-      id: '3',
-      name: 'Post 3',
-      text: 'This is a threat post with level 1 threat.',
-      threatLevel: 1,
-      creatorId: 'user3'
-    },
-    {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat., This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.,This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      },
-      {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      },
-      {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      },
-      {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      },
-      {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      },
-      {
-        id: '1',
-        name: 'Post 1',
-        text: 'This is a threat post with level 2 threat.',
-        threatLevel: 2,
-        creatorId: 'user1'
-      },
-      {
-        id: '2',
-        name: 'Post 2',
-        text: 'This is a threat post with level 4 threat.',
-        threatLevel: 4,
-        creatorId: 'user2'
-      },
-      {
-        id: '3',
-        name: 'Post 3',
-        text: 'This is a threat post with level 1 threat.',
-        threatLevel: 1,
-        creatorId: 'user3'
-      }
-  ];
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Post {
   id: string;
@@ -165,149 +30,208 @@ interface Post {
 
 const ThreatPostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const { blacklist, addToBlacklist, removeFromBlacklist } = useBlacklist();
+  const [blacklistModalOpen, setBlacklistModalOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch posts from the server
     fetchPosts();
   }, []);
 
   const fetchPosts = async () => {
     try {
-    //   const response = await fetch('/api/posts');
-    //   const data = await response.json();
-      setPosts(mockPosts);
+      const requestBody = {
+        classifier_mode: "severity",
+        window_size_list: [2, 3, 4],
+        ngram_extract_mode: "all",
+        eval_data: [
+          {
+            text: 'rt engadget " <TARGET> man gets 00 months in prison for emergency system ddos attacks https:t.co0pqrpdixsu "',
+          },
+          {
+            text: "<TARGET> android on qualcomm secure app pointer dereference memory corruption : a vulnerability was found in google https:t.cogkzaixkoyg",
+          },
+          {
+            text: "this is a rare moment of vulnerability for me , but sometimes i deeply fear that there will be an <TARGET> update that https:t.coikox0ccqzb",
+          },
+          {
+            text: "<TARGET> addresses #spectre #security vulnerability previously identified by google researchers with the release o https:t.cofkymdb0fkl",
+          },
+          {
+            text: "@survivetheark server 000 on <TARGET> has been being ddos'd for a while now 😢😓😭",
+          },
+        ],
+      };
+  
+      console.log("Attempting to fetch posts...");
+      const response = await fetch('http://127.0.0.1:8000/evaluate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      console.log("Data fetched successfully:", data);
+  
+      // Assuming response has an array of probabilities and texts, like
+      // data.evaluation_results = [{ text: "sample text", probability: 0.85 }, ...]
+      const evaluationResults = data.evaluation_results.map((result: any) => {
+        const threatLevel = determineThreatLevel(result.severity_prob);
+        return {
+          id: generateUniqueId(), // Assuming a unique ID generation method
+          name: 'User', // Placeholder or fetched name
+          text: result.text,
+          threatLevel: threatLevel,
+          creatorId: generateUniqueCreatorId(), // Placeholder or fetched creator ID
+        };
+      });
+
+      setPosts(evaluationResults);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
 
-  const handleAddToBlacklist = (creatorId: string) => {
-    addToBlacklist(creatorId);
+  // Helper function to determine threat level based on probability
+  const determineThreatLevel = (probability: number): 1 | 2 | 3 | 4 => {
+    if (probability < 0.05) {
+      return 1; // Low Threat
+    } else if (probability < 0.15) {
+      return 2; // Moderate Threat
+    } else if (probability < 0.3) {
+      return 3; // High Threat
+    } else {
+      return 4; // Critical Threat
+    }
+  };
+
+  // Utility function to generate unique IDs (e.g., UUID)
+  const generateUniqueId = (): string => {
+    return Math.random().toString(36).substr(2, 9);
+  };
+
+  const generateUniqueCreatorId = (): string => {
+    return Math.random().toString(36).substr(2, 9);
   };
 
   const handleRemoveFromBlacklist = (creatorId: string) => {
-    removeFromBlacklist(creatorId);
+    const updatedPosts = posts.filter((post) => post.creatorId !== creatorId);
+    setPosts(updatedPosts);
+  };
+
+  const handleOpenBlacklistModal = () => {
+    setBlacklistModalOpen(true);
+  };
+
+  const handleCloseBlacklistModal = () => {
+    setBlacklistModalOpen(false);
   };
 
   const getThreatLevelInfo = (level: 1 | 2 | 3 | 4) => {
     const levels = {
-      1: {
-        label: 'Low',
-        color: 'text-green-500',
-        bgColor: 'bg-green-50',
-        borderColor: 'border-green-200',
-        icon: CheckCircle
-      },
-      2: {
-        label: 'Moderate',
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-50',
-        borderColor: 'border-yellow-200',
-        icon: Shield
-      },
-      3: {
-        label: 'High',
-        color: 'text-orange-500',
-        bgColor: 'bg-orange-50',
-        borderColor: 'border-orange-200',
-        icon: AlertTriangle
-      },
-      4: {
-        label: 'Critical',
-        color: 'text-red-500',
-        bgColor: 'bg-red-50',
-        borderColor: 'border-red-200',
-        icon: Ban
-      }
+      1: { label: 'Low', color: '#4caf50', icon: CheckCircle },
+      2: { label: 'Moderate', color: '#ff9800', icon: Shield },
+      3: { label: 'High', color: '#fb8c00', icon: AlertTriangle },
+      4: { label: 'Critical', color: '#f44336', icon: Ban },
     };
     return levels[level] || levels[1];
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <Toolbar>
-                <Typography variant="h6" noWrap component="div" style={{ color:"white", width: "100%", textAlign: "center" }}>
-                        Threat Posts
-                </Typography>
-                </Toolbar>
-            </AppBar>
-            <p className="mt-1 text-sm text-gray-500">
-              Monitoring and managing potential security threats
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Alert className="bg-gray-50 border-gray-200">
-              <AlertDescription>
-                <span className="font-medium">{posts.filter(p => blacklist.includes(p.creatorId)).length}</span> posts blacklisted
-              </AlertDescription>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
+            Threat Posts
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3, mt: 10 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h5" color="text.primary">
+            Blacklisted Users' Tweets
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Alert severity="info" sx={{ display: 'flex', alignItems: 'center' }}>
+              <AlertTitle>Info</AlertTitle>
+              <strong>{posts.length}</strong> blacklisted posts
             </Alert>
-          </div>
-        </div>
+            <Button variant="contained" color="primary" onClick={handleOpenBlacklistModal}>
+              Manage Blacklist
+            </Button>
+          </Box>
+        </Box>
 
-        <div className="grid gap-6">
-          {posts.filter((post) => blacklist.includes(post.creatorId)).map((post) => {
-            const threatInfo = getThreatLevelInfo(post.threatLevel);
-            const ThreatIcon = threatInfo.icon;
+        <Box sx={{ display: 'grid', gap: 3 }}>
+          {posts.length === 0 ? (
+            <Typography variant="body1" color="text.secondary">
+              No blacklisted posts to display.
+            </Typography>
+          ) : (
+            posts.map((post) => {
+              const threatInfo = getThreatLevelInfo(post.threatLevel);
+              const ThreatIcon = threatInfo.icon;
 
-            return (
-              <Card 
-                key={post.id}
-                style={{ width: '100%', minHeight: '240px' }}
-                className={`transition-all duration-200 hover:shadow-lg ${threatInfo.borderColor} border-l-4`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4">
-                      <div className={`p-2 rounded-full ${threatInfo.bgColor}`}>
-                        <User className={`h-6 w-6 ${threatInfo.color}`} />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{post.name}</h3>
-                        <div className="mt-1 flex items-center space-x-2">
-                          <ThreatIcon className={`h-4 w-4 ${threatInfo.color}`} />
-                          <span className={`text-sm font-medium ${threatInfo.color}`}>
-                            {threatInfo.label} Threat Level
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              return (
+                <Card
+                  key={post.id}
+                  variant="outlined"
+                  sx={{
+                    borderLeft: `4px solid`,
+                    borderColor: threatInfo.color,
+                    transition: 'box-shadow 0.3s',
+                    '&:hover': {
+                      boxShadow: 6,
+                    },
+                  }}
+                >
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Box sx={{ bgcolor: '#e8f5e9', p: 1.5, borderRadius: '50%' }}>
+                          <User size={24} color={threatInfo.color} />
+                        </Box>
+                        <Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                            <ThreatIcon color={threatInfo.color} size={18} />
+                            <Typography variant="body2" color="text.primary">
+                              {threatInfo.label} Threat Level
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Tooltip title="Delete tweet">
+                        <IconButton color="error" onClick={() => handleRemoveFromBlacklist(post.creatorId)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
 
-                    <button
-                      onClick={() => handleRemoveFromBlacklist(post.creatorId)}
-                      className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium
-                        ${threatInfo.bgColor} ${threatInfo.color}
-                        hover:bg-gray-100 transition-colors duration-200`}
-                    >
-                      <Ban className="h-4 w-4 mr-1.5" />
-                      Remove from Blacklist
-                    </button>
-                  </div>
+                    <Box sx={{ mt: 2, p: 2, bgcolor: '#e8f5e9', borderRadius: 1 }}>
+                      <Typography variant="body1" color="text.secondary">
+                        {post.text}
+                      </Typography>
+                    </Box>
 
-                  <div className={`mt-4 p-4 rounded-lg ${threatInfo.bgColor}`}>
-                    <p className="text-gray-700 text-xl">{post.text}</p>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center space-x-4">
-                      <span>ID: {post.creatorId.length > 8 ? post.creatorId.slice(0, 8) : post.creatorId}</span>
-                    
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">
+                        User ID: {post.creatorId}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
 export default ThreatPostList;
-
-
