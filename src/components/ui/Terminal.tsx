@@ -1,13 +1,16 @@
 import { ReactTerminal } from "react-terminal";
+
 type TerminalProps = {
   bgColor: string;
   promptColor: string;
-  welcomMsg: string;
+  // welcomMsg: string;
+  prompt: string;
 };
 export default function Terminal({
   bgColor,
   promptColor,
-  welcomMsg,
+  // welcomMsg,
+  prompt,
 }: TerminalProps) {
   const commands = {
     hello: "hello",
@@ -24,11 +27,12 @@ export default function Terminal({
         },
       }}
       theme="my-custom-theme"
-      welcomeMessage={welcomMsg}
+      // welcomeMessage={welcomMsg}
       showControlBar={false}
       showControlButtons={false}
       enableInput={false}
-      prompt="hello"
+      prompt={prompt}
+      // prompt="hello"
     />
   );
 }

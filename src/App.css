@@ -1,7 +1,8 @@
 #root {
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2.8rem; */
   text-align: center;
+  background-color: rgb(24, 31, 36);
 }
 
 .logo {

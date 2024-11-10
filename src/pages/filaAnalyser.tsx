@@ -1,12 +1,18 @@
-import { useState } from 'react';
-import { Upload, AlertCircle, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Alert } from '../components/ui/alert';
-import AnalysisResults from '../components/ui/analysis_result';
-import { env } from '../config/env';
+import { Alert } from "../components/ui/alert";
+import AnalysisResults from "../components/ui/analysis_result";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { env } from "../config/env";
+import { Upload, AlertCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
+
 // load env variables
 const FileAnalyzer = () => {
-  const [_ , setFile] = useState(null);
+  const [_, setFile] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState<string | null>(null);
@@ -14,13 +20,13 @@ const FileAnalyzer = () => {
   const analyzeFile = async (uploadedFile: any) => {
     setAnalyzing(true);
     setError(null);
-    
+
     try {
       const formData = new FormData();
-      formData.append('file', uploadedFile);
+      formData.append("file", uploadedFile);
 
       const response = await fetch(`${env.VITE_API_URL}/analyze_ai`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
@@ -40,35 +46,43 @@ const FileAnalyzer = () => {
   const handleFileDrop = async (e: any) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.name.endsWith('.exe')) {
+    if (droppedFile && droppedFile.name.endsWith(".exe")) {
       setFile(droppedFile);
       await analyzeFile(droppedFile);
     } else {
-      setError('Please upload a valid .exe file');
+      setError("Please upload a valid .exe file");
     }
   };
 
   const handleFileSelect = async (e: any) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.name.endsWith('.exe')) {
+    if (selectedFile && selectedFile.name.endsWith(".exe")) {
       setFile(selectedFile);
       await analyzeFile(selectedFile);
     } else {
-      setError('Please select a valid .exe file');
+      setError("Please select a valid .exe file");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8" style={{width: "100%", minWidth: "800px" }}>
-      <div className="max-w-4xl mx-auto space-y-6" style={{width: "100%", minWidth: "800px" }}>
-        <Card style={{width: "100%", minWidth: "800px", minHeight: "400px" }}>
+    <div
+      className="min-h-screen bg-[#181f24]"
+      style={{ width: "100%", minWidth: "800px", marginTop: "8rem" }}
+    >
+      <div
+        className="max-w-4xl mx-auto space-y-6"
+        style={{ width: "100%", minWidth: "800px" }}
+      >
+        <Card style={{ width: "100%", minWidth: "800px", minHeight: "400px" }}>
           <CardHeader>
-            <CardTitle className="text-4xl font-bold">EXE File Analyzer</CardTitle>
+            <CardTitle className="text-4xl font-bold text-[#30c48b]">
+              EXE File Analyzer
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div
               onDrop={handleFileDrop}
-              style={{ cursor: 'pointer', height: '250px' }}
+              style={{ cursor: "pointer", height: "250px" }}
               onDragOver={(e) => e.preventDefault()}
               className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
             >

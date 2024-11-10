@@ -1,8 +1,6 @@
-
-
-import React, { useRef, useEffect } from "react";
 import { useDrawerContext } from "./DrawerContext";
 import * as d3 from "d3";
+import React, { useRef, useEffect } from "react";
 
 interface Node extends d3.SimulationNodeDatum {
   id: string;
@@ -27,7 +25,6 @@ interface NetworkGraph {
   nodes: Node[];
   links: Link[];
 }
-
 
 const data: NetworkGraph = {
   nodes: [
@@ -214,8 +211,8 @@ const App: React.FC = () => {
 
     svg
       .attr("viewBox", `0 0 ${width} ${height}`)
-      .style("background-color", "#000") // Cyber black background
-      .style("border", "1px solid #00ff00"); // Cyber green border
+      .style("background-color", "#131a22") // Cyber black background
+      .style("border", "1px solid #30c48b"); // Cyber green border
 
     const simulation = d3
       .forceSimulation<Node>(data.nodes)
@@ -237,7 +234,7 @@ const App: React.FC = () => {
       .enter()
       .append("line")
       .attr("stroke-width", 2)
-      .attr("stroke", "#00ff00") // Cyber green for links
+      .attr("stroke", "white") // Cyber green for links
       .attr("stroke-dasharray", (d) => (d.type === "dashed" ? "5,5" : ""));
 
     const node = svg
@@ -277,9 +274,9 @@ const App: React.FC = () => {
       .attr("class", "tooltip")
       .style("position", "absolute")
       .style("background", "#222")
-      .style("color", "#00ff00")
+      .style("color", "#30c48b")
       .style("padding", "8px")
-      .style("border", "1px solid #00ff00")
+      .style("border", "1px solid #30c48b")
       .style("border-radius", "4px")
       .style("visibility", "hidden");
 
@@ -354,7 +351,9 @@ const App: React.FC = () => {
 
   return (
     <div className="centering">
-      <h1 style={{ color: "#00ff00" }}>Network Architecture Visualization</h1>
+      <h1 style={{ color: "white", marginBottom: "4rem" }}>
+        Network Architecture Visualization
+      </h1>
       <svg ref={svgRef} width="100%" height="100%"></svg>
     </div>
   );
