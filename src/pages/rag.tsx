@@ -19,6 +19,7 @@ import {
     createTheme,
 } from '@mui/material';
 import { CheckCircle, Cancel, CloudUpload, QuestionAnswer } from '@mui/icons-material';
+import { green, grey } from '@mui/material/colors'; // Added import for colors
 
 // Type for individual URL validation status
 interface ValidatedUrl {
@@ -31,37 +32,97 @@ interface URLValidatorProps {
     url: string;
 }
 
+// Define the cyber-themed MUI theme
 const theme = createTheme({
     palette: {
+        mode: 'dark',
         primary: {
-            main: '#1976d2', // Blue
+            main: '#00ff00', // Neon Green
         },
         secondary: {
-            main: '#ff9800', // Orange
+            main: '#ff4081', // Bright Pink for contrast
         },
         success: {
-            main: '#4caf50', // Green
+            main: '#00e676', // Light Green
         },
         error: {
             main: '#f44336', // Red
         },
         background: {
-            default: '#f0f2f5',
+            default: '#121212', // Dark background
+            paper: '#1d1d1d', // Slightly lighter for paper components
+        },
+        text: {
+            primary: '#00ff00', // Neon Green for primary text
+            secondary: '#b0b0b0', // Light Grey for secondary text
         },
     },
     typography: {
+        fontFamily: 'Roboto, monospace',
         h4: {
-            fontWeight: 600,
+            fontWeight: 700,
+            color: '#00ff00',
         },
         h6: {
-            fontWeight: 500,
+            fontWeight: 600,
+            color: '#00ff00',
+        },
+        body1: {
+            color: '#e0e0e0',
+        },
+        body2: {
+            color: '#b0b0b0',
         },
     },
     components: {
         MuiCardHeader: {
             styleOverrides: {
                 root: {
-                    backgroundColor: '#e3f2fd',
+                    backgroundColor: '#1a1a1a',
+                },
+                title: {
+                    color: '#00ff00',
+                },
+                subheader: {
+                    color: '#b0b0b0',
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 0 10px rgba(0, 255, 0, 0.5)',
+                    '&:hover': {
+                        boxShadow: '0 0 20px rgba(0, 255, 0, 0.7)',
+                    },
+                },
+                containedPrimary: {
+                    backgroundColor: '#00ff00',
+                    color: '#000',
+                    '&:hover': {
+                        backgroundColor: '#00e600',
+                    },
+                },
+                containedSecondary: {
+                    backgroundColor: '#ff4081',
+                    color: '#000',
+                    '&:hover': {
+                        backgroundColor: '#e040fb',
+                    },
+                },
+            },
+        },
+        MuiLinearProgress: {
+            styleOverrides: {
+                root: {
+                    height: '8px',
+                    borderRadius: '4px',
+                },
+                bar: {
+                    borderRadius: '4px',
+                    backgroundColor: '#00ff00',
                 },
             },
         },
@@ -84,9 +145,9 @@ const URLValidator: React.FC<URLValidatorProps> = ({ url }) => {
     return (
         <Box display="flex" alignItems="center" gap={1}>
             {isValid ? (
-                <CheckCircle color="success" />
+                <CheckCircle style={{ color: green[500] }} />
             ) : (
-                <Cancel color="error" />
+                <Cancel style={{ color: grey[500] }} />
             )}
             <Typography variant="body2" color={isValid ? 'success.main' : 'error.main'}>
                 {isValid ? 'Valid URL' : 'Invalid URL'}
@@ -227,7 +288,16 @@ const RAGInterface: React.FC = () => {
                 <Grid container spacing={4} justifyContent="center">
                     <Grid item xs={11} md={8}>
                         {/* Header Section */}
-                        <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
+                        <Paper
+                            elevation={3}
+                            sx={{
+                                padding: 3,
+                                marginBottom: 4,
+                                background: 'linear-gradient(135deg, #00ff00 0%, #007700 100%)',
+                                borderRadius: '12px',
+                                boxShadow: '0 0 20px rgba(0, 255, 0, 0.5)',
+                            }}
+                        >
                             <Typography variant="h4" gutterBottom>
                                 Zephyr-7B RAG System
                             </Typography>
@@ -237,7 +307,16 @@ const RAGInterface: React.FC = () => {
                         </Paper>
 
                         {/* Input Section */}
-                        <Card variant="outlined" sx={{ marginBottom: 4 }}>
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                marginBottom: 4,
+                                backgroundColor: '#1d1d1d',
+                                border: '1px solid #00ff00',
+                                borderRadius: '12px',
+                                boxShadow: '0 0 10px rgba(0, 255, 0, 0.5)',
+                            }}
+                        >
                             <CardHeader
                                 title="Knowledge Base Setup"
                                 subheader="Enter the URLs for your knowledge base"
@@ -253,6 +332,25 @@ const RAGInterface: React.FC = () => {
                                     variant="outlined"
                                     margin="normal"
                                     label="Enter URLs"
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            '& fieldset': {
+                                                borderColor: '#00ff00',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: '#00e600',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#00ff00',
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            color: '#00ff00',
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#00ff00',
+                                        },
+                                    }}
                                 />
                                 <Typography variant="body2" color="textSecondary" gutterBottom>
                                     {totalUrlCount} URLs entered, {validUrlCount} are valid
@@ -262,15 +360,15 @@ const RAGInterface: React.FC = () => {
                                         <ListItem key={index}>
                                             <ListItemIcon>
                                                 {item.isValid ? (
-                                                    <CheckCircle color="success" />
+                                                    <CheckCircle style={{ color: green[500] }} />
                                                 ) : (
-                                                    <Cancel color="error" />
+                                                    <Cancel style={{ color: grey[500] }} />
                                                 )}
                                             </ListItemIcon>
                                             <ListItemText
                                                 primary={item.url}
                                                 primaryTypographyProps={{
-                                                    style: { wordBreak: 'break-all' },
+                                                    style: { wordBreak: 'break-all', color: '#e0e0e0' },
                                                 }}
                                             />
                                         </ListItem>
@@ -293,12 +391,28 @@ const RAGInterface: React.FC = () => {
                                     )}
                                 </Box>
                                 {error && (
-                                    <Alert severity="error" sx={{ marginTop: 2 }}>
+                                    <Alert
+                                        severity="error"
+                                        sx={{
+                                            marginTop: 2,
+                                            backgroundColor: '#333',
+                                            color: '#ff4d4d',
+                                            border: '1px solid #ff4d4d',
+                                        }}
+                                    >
                                         {error}
                                     </Alert>
                                 )}
                                 {success && (
-                                    <Alert severity="success" sx={{ marginTop: 2 }}>
+                                    <Alert
+                                        severity="success"
+                                        sx={{
+                                            marginTop: 2,
+                                            backgroundColor: '#333',
+                                            color: '#00ff00',
+                                            border: '1px solid #00ff00',
+                                        }}
+                                    >
                                         {success}
                                     </Alert>
                                 )}
@@ -306,7 +420,16 @@ const RAGInterface: React.FC = () => {
                         </Card>
 
                         {/* Question Section */}
-                        <Card variant="outlined" sx={{ marginBottom: 4 }}>
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                marginBottom: 4,
+                                backgroundColor: '#1d1d1d',
+                                border: '1px solid #00ff00',
+                                borderRadius: '12px',
+                                boxShadow: '0 0 10px rgba(0, 255, 0, 0.5)',
+                            }}
+                        >
                             <CardHeader
                                 title="Ask a Question"
                                 subheader={
@@ -325,6 +448,25 @@ const RAGInterface: React.FC = () => {
                                     margin="normal"
                                     label="Your Question"
                                     disabled={!isDatabaseReady}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            '& fieldset': {
+                                                borderColor: '#00ff00',
+                                            },
+                                            '&:hover fieldset': {
+                                                borderColor: '#00e600',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#00ff00',
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            color: '#00ff00',
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#00ff00',
+                                        },
+                                    }}
                                 />
                                 <Box display="flex" alignItems="center" gap={2} marginTop={2}>
                                     <Button
@@ -336,51 +478,54 @@ const RAGInterface: React.FC = () => {
                                     >
                                         {isAnswering ? 'Thinking...' : 'Get Answer'}
                                     </Button>
-                                    {isAnswering && <LinearProgress sx={{ flexGrow: 1 }} />}
+                                    {isAnswering && (
+                                        <LinearProgress
+                                            sx={{ flexGrow: 1, height: '8px', borderRadius: '4px' }}
+                                        />
+                                    )}
                                 </Box>
                                 {error && (
-                                    <Alert severity="error" sx={{ marginTop: 2 }}>
+                                    <Alert
+                                        severity="error"
+                                        sx={{
+                                            marginTop: 2,
+                                            backgroundColor: '#333',
+                                            color: '#ff4d4d',
+                                            border: '1px solid #ff4d4d',
+                                        }}
+                                    >
                                         {error}
                                     </Alert>
                                 )}
                                 {success && (
-                                    <Alert severity="success" sx={{ marginTop: 2 }}>
+                                    <Alert
+                                        severity="success"
+                                        sx={{
+                                            marginTop: 2,
+                                            backgroundColor: '#333',
+                                            color: '#00ff00',
+                                            border: '1px solid #00ff00',
+                                        }}
+                                    >
                                         {success}
                                     </Alert>
                                 )}
                                 {answer && (
-                                    <Card variant="outlined" sx={{ marginTop: 4, backgroundColor: '#fafafa' }}>
+                                    <Card
+                                        variant="outlined"
+                                        sx={{
+                                            marginTop: 4,
+                                            backgroundColor: '#1a1a1a',
+                                            border: '1px solid #00ff00',
+                                            borderRadius: '12px',
+                                            boxShadow: '0 0 10px rgba(0, 255, 0, 0.5)',
+                                        }}
+                                    >
                                         <CardHeader title="Answer" />
                                         <CardContent>
                                             <Typography variant="body1" gutterBottom>
                                                 {answer}
                                             </Typography>
-                                            {sources.length > 0 && (
-                                                <Box marginTop={2}>
-                                                    <Typography variant="subtitle1">Sources:</Typography>
-                                                    <List>
-                                                        {sources.map((source, index) => (
-                                                            <ListItem key={index} disablePadding>
-                                                                <ListItemIcon>
-                                                                    <CheckCircle color="primary" />
-                                                                </ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={
-                                                                        <a
-                                                                            href={source}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            style={{ textDecoration: 'none', color: '#1976d2' }}
-                                                                        >
-                                                                            {source}
-                                                                        </a>
-                                                                    }
-                                                                />
-                                                            </ListItem>
-                                                        ))}
-                                                    </List>
-                                                </Box>
-                                            )}
                                         </CardContent>
                                     </Card>
                                 )}
@@ -391,6 +536,6 @@ const RAGInterface: React.FC = () => {
             </Box>
         </ThemeProvider>
     );
-};
+}
 
 export default RAGInterface;

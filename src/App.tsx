@@ -22,9 +22,9 @@ function App() {
         return <Typography variant="h4">DashBoard</Typography>;
       case 'Black List':
         return <ThreatPostList /> // <ThreatPostList />;
-      case 'File analyzer': 
+      case 'File analyzer':
         return <FileAnalyzer />;
-      case 'rag': 
+      case 'rag':
         return <Rag />;
       default:
         return <Typography variant="h4">Welcome</Typography>;
@@ -42,7 +42,7 @@ function App() {
           </Typography>
         </Toolbar>
       </AppBar> */}
-      
+
       <Drawer
         variant="permanent"
         sx={{
@@ -51,13 +51,13 @@ function App() {
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
-        <Toolbar style={{marginTop: "80px"}}>
+        <Toolbar style={{ marginTop: "80px" }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <img src={reactLogo} alt="Logo" style={{ width: 140, height: 140 }} />
           </Box>
         </Toolbar>
         <List>
-          {['Dashboard', 'Black List', 'File analyzer','rag'].map((text, index) => (
+          {['Dashboard', 'Black List', 'File analyzer', 'rag'].map((text, index) => (
             <ListItemButton key={text} onClick={() => setPage(text)}>
               <ListItemIcon>
                 {index === 0 ? <HomeIcon /> : index === 1 ? <InfoIcon /> : <SettingsIcon />}
