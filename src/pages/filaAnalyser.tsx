@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Upload, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { Upload, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Alert, AlertDescription } from '../components/ui/alert';
+import { Alert } from '../components/ui/alert';
+import AnalysisResults from '../components/ui/analysis_result';
 import { env } from '../config/env';
 // load env variables
 const FileAnalyzer = () => {
@@ -18,7 +19,7 @@ const FileAnalyzer = () => {
       const formData = new FormData();
       formData.append('file', uploadedFile);
 
-      const response = await fetch(`${env.VITE_API_URL}/analyze`, {
+      const response = await fetch(`${env.VITE_API_URL}/analyze_ai`, {
         method: 'POST',
         body: formData,
       });
@@ -95,10 +96,14 @@ const FileAnalyzer = () => {
         </Card>
 
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <Alert
+            severity="error"
+            title="An error occurred"
+            message="There was a problem with your request. Please try again."
+            icon={<AlertCircle className="h-4 w-4" />}
+            onClose={() => console.log("Alert closed")}
+            className="custom-alert-class"
+          />
         )}
 
         {analyzing && (
@@ -112,32 +117,7 @@ const FileAnalyzer = () => {
           </Card>
         )}
 
-        {results && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-green-500" />
-                <span>Analysis Results</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {Object.entries(results).map(([key, value]) => (
-                  <div key={key} className="border-b pb-4">
-                    <h3 className="font-medium text-gray-700 mb-2">
-                      {key.replace(/_/g, ' ').toUpperCase()}
-                    </h3>
-                    <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
-                      {typeof value === 'object' 
-                        ? JSON.stringify(value, null, 2)
-                        : value!.toString()}
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {results && <AnalysisResults results={results} />}
       </div>
     </div>
   );

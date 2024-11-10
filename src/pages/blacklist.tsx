@@ -3,11 +3,7 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Modal,
   Button,
-  List,
-  ListItem,
-  ListItemText,
   IconButton,
   Card,
   CardContent,
@@ -17,7 +13,6 @@ import {
   AlertTitle,
 } from '@mui/material';
 import { Shield, User, AlertTriangle, Ban, CheckCircle } from 'lucide-react';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Post {
@@ -30,7 +25,7 @@ interface Post {
 
 const ThreatPostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [blacklistModalOpen, setBlacklistModalOpen] = useState(false);
+  const [ _ , setBlacklistModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -62,7 +57,7 @@ const ThreatPostList: React.FC = () => {
       };
   
       console.log("Attempting to fetch posts...");
-      const response = await fetch('http://127.0.0.1:8000/evaluate', {
+      const response = await fetch('https://7528-196-203-181-122.ngrok-free.app/evaluate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,10 +120,6 @@ const ThreatPostList: React.FC = () => {
 
   const handleOpenBlacklistModal = () => {
     setBlacklistModalOpen(true);
-  };
-
-  const handleCloseBlacklistModal = () => {
-    setBlacklistModalOpen(false);
   };
 
   const getThreatLevelInfo = (level: 1 | 2 | 3 | 4) => {
