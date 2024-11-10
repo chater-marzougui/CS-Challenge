@@ -25,6 +25,11 @@ def debug():
 
 
 model = tf.keras.models.load_model('malware_model_checkpoints.h5.keras')
+malware_classes = ["Adialer.C", "Agent.FYI", "Allaple.A", "Allaple.L Alueron.gen!J", "Autorun.K", "C2LOP.P",
+                   "C2LOP.gen!g Dialplatform.B", "Dontovo.A", "Fakerean", "Instantaccess", "Lolyda.AA1",
+                   "Lolyda.AA2", "Lolyda.AA3", "Lolyda.AT", "Malex.gen!J", "Obfuscator.AD", "Rbot!gen",
+                   "Skintrim.N", "Swizzor.gen!E", "Swizzor.gen!I", "VB.AT", "Wintrim.BX", "Yuner.A"]
+
 API_KEY = "2db7f201703404731e94721a388ee1106d04ab9a248a534c4aa65ee31fa92991"
 
 
@@ -228,7 +233,6 @@ def calculate_hashes(file_path):
 #
 
 def handle_virus_total_analysis(temp_path, analysis_id):
-    # Poll for VirusTotal results
     analysis_result = poll_virus_total_status(analysis_id)
     if analysis_result:
         malicious_count = get_number_of_malicious_detections(analysis_id)
@@ -275,7 +279,7 @@ def analyse_with_ai():
 
     predictions = model.predict(img_array)
     predicted_class_idx = np.argmax(predictions[0])
-    predicted_class = "class " + str(predicted_class_idx)
+    predicted_class = malware_classes[predicted_class_idx]
     confidence = float(predictions[0][predicted_class_idx])
 
     try:
@@ -285,24 +289,34 @@ def analyse_with_ai():
             'file_type': magic.from_file(temp_path),
             'mime_type': magic.from_file(temp_path, mime=True)
         }
-
         hashes = calculate_hashes(temp_path)
         analysis_id = virus_total_analyze_file(temp_path)
-        # Prepare results from AI analysis
+
+        virus_total_results = poll_virus_total_status(analysis_id)
+        number = get_number_of_malicious_detections(analysis_id)
+        if number > 0:
+            pred = f"Class:{predicted_class}, Confidence: {confidence}"
+        else:
+            pred = "The File is Safe"
         results = {
             'file_info': file_info,
             'hashes': hashes,
-            'model_analysis': f"class:{predicted_class}, confidence: {confidence}",
-            'virus_total_analysis_id': analysis_id
+            'model_analysis': pred,
+            'virus_total_analysis': virus_total_results
         }
 
+        handle_virus_total_analysis(temp_path, analysis_id)
+        # # Prepare results from AI analysis
+        # results = {
+        #     'file_info': file_info,
+        #     'hashes': hashes,
+        #     'model_analysis': f"class:{predicted_class}, confidence: {confidence}",
+        #     'virus_total_analysis_id': analysis_id
+        # }
+        # if analysis_id:
+        #     thread = threading.Thread(target=handle_virus_total_analysis, args=(temp_path, analysis_id))
+        #     thread.start()
         response = jsonify(results)
-        if analysis_id:
-            # Run VirusTotal analysis in a background thread
-            thread = threading.Thread(target=handle_virus_total_analysis, args=(temp_path, analysis_id))
-            thread.start()
-        else:
-            print("Failed to submit file to VirusTotal")
 
         return response
 
