@@ -1,12 +1,13 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './card';
-import { Shield, FileText, Hash, Brain, AlertTriangle } from 'lucide-react';
+import { Shield, FileText, Hash, Brain, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface AnalysisResultsProps {
   results: {
     file_info: Record<string, string>;
     hashes: Record<string, string>;
     model_analysis: string;
+    virus_total_analysis_id?: string;
     virus_total_analysis?: {
       data?: {
         attributes?: {
@@ -17,28 +18,29 @@ interface AnalysisResultsProps {
       };
     };
   };
+  isLoadingVirusTotal: boolean;
 }
 
-const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results }) => {
 interface Stats {
-    malicious: number;
-    undetected: number;
-    [key: string]: number;
+  malicious: number;
+  undetected: number;
+  [key: string]: number;
 }
 
 const getDetectionColor = (stats?: Stats): string => {
-    if (!stats) return 'text-gray-400';
-    const maliciousRatio = stats.malicious / (stats.malicious + stats.undetected);
-    if (maliciousRatio > 0.7) return 'text-red-500';
-    if (maliciousRatio > 0.3) return 'text-yellow-500';
-    return 'text-green-500';
+  if (!stats) return 'text-gray-400';
+  const maliciousRatio = stats.malicious / (stats.malicious + stats.undetected);
+  if (maliciousRatio > 0.7) return 'text-red-500';
+  if (maliciousRatio > 0.3) return 'text-yellow-500';
+  return 'text-green-500';
 };
 
 const formatDate = (timestamp: number | undefined): string => {
-    if (!timestamp) return '';
-    return new Date(timestamp * 1000).toLocaleString();
+  if (!timestamp) return '';
+  return new Date(timestamp * 1000).toLocaleString();
 };
 
+const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVirusTotal }) => {
   return (
     <div className="space-y-6">
       {/* File Information */}
@@ -103,7 +105,12 @@ const formatDate = (timestamp: number | undefined): string => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {results.virus_total_analysis?.data?.attributes && (
+          {isLoadingVirusTotal ? (
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+              <span className="ml-4">Fetching VirusTotal analysis...</span>
+            </div>
+          ) : results.virus_total_analysis?.data?.attributes ? (
             <div className="space-y-6">
               {/* Statistics Summary */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -120,7 +127,7 @@ const formatDate = (timestamp: number | undefined): string => {
                 <h3 className="font-medium text-lg">Detailed Scan Results</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {Object.entries(results.virus_total_analysis.data.attributes.results)
-                    .filter(([_, result]) => result.result) // Only show detections
+                    .filter(([_, result]) => result.result)
                     .map(([engine, result]) => (
                       <div key={engine} className="bg-gray-50 p-4 rounded-lg">
                         <div className="flex items-center space-x-2">
@@ -128,9 +135,7 @@ const formatDate = (timestamp: number | undefined): string => {
                           <p className="font-medium">{engine}</p>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">{result.result}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          Version: {result.engine_version}
-                        </p>
+                        <p className="text-xs text-gray-400 mt-1">Version: {result.engine_version}</p>
                       </div>
                     ))}
                 </div>
@@ -141,6 +146,8 @@ const formatDate = (timestamp: number | undefined): string => {
                 <p>Scan completed: {formatDate(results.virus_total_analysis.data.attributes.date)}</p>
               </div>
             </div>
+          ) : (
+            <p className="text-gray-500">No VirusTotal analysis available</p>
           )}
         </CardContent>
       </Card>
