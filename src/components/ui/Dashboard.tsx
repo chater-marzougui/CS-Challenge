@@ -1,3 +1,4 @@
+import DeviceAlertCard from "./DeviceAlertCard";
 import PageViewsBarChart from "./PageViewsBarChat";
 import SessionsChart from "./SessionChart";
 import StatCard, { StatCardProps } from "./StatCard";
@@ -39,7 +40,12 @@ const statCardData: StatCardProps[] = [
     ],
   },
 ];
-
+const deviceData = [
+  { name: "Firewall1", alert: "No alert" },
+  { name: "Router1", alert: "Warning" },
+  { name: "Server2", alert: "Critical" },
+  { name: "UserHost1", alert: "No alert" },
+];
 export default function Dashboard() {
   return (
     <Box
@@ -53,18 +59,21 @@ export default function Dashboard() {
         {/* StatCards */}
         {statCardData.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
+            <DeviceAlertCard deviceData={deviceData} />
           </Grid>
         ))}
 
         {/* SessionsChart */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <SessionsChart />
+          {/* <SessionsChart /> */}
+          <DeviceAlertCard deviceData={deviceData} />
         </Grid>
 
         {/* PageViewsBarChart */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <PageViewsBarChart />
+          {/* <PageViewsBarChart /> */}
+          <DeviceAlertCard deviceData={deviceData} />
         </Grid>
       </Grid>
     </Box>
