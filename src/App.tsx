@@ -1,9 +1,9 @@
-import reactLogo from "./assets/react.svg";
 import ThreatPostList from "./pages/blacklist";
 import DashboardContainer from "./pages/dashboard";
 import FileAnalyzer from "./pages/filaAnalyser";
 import Graph from "./pages/graph";
 import Rag from "./pages/rag";
+import reactLogo from "/logo.png";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -75,7 +75,7 @@ function App() {
             <img
               src={reactLogo}
               alt="Logo"
-              style={{ width: 140, height: 140 }}
+              style={{ width: 800, height: 200 }}
             />
           </Box>
         </Toolbar>

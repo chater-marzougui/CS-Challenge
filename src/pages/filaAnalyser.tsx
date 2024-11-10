@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { Upload, AlertCircle, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Alert } from '../components/ui/alert';
-import AnalysisResults from '../components/ui/analysis_result';
-import { env } from '../config/env';
-
+import { Alert } from "../components/ui/alert";
+import AnalysisResults from "../components/ui/analysis_result";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { env } from "../config/env";
+import { Upload, AlertCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const FileAnalyzer = () => {
-  const [ file , setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [results, setResults] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +22,7 @@ const FileAnalyzer = () => {
     setError(null);
     setResults(null);
     setIsLoadingVirusTotal(false);
-    
+
     try {
       const formData = new FormData();
       formData.append("file", uploadedFile);
@@ -35,19 +39,18 @@ const FileAnalyzer = () => {
       const data = await response.json();
       setResults(data);
 
-      if(data.virus_total_analysis) {
+      if (data.virus_total_analysis) {
         setIsLoadingVirusTotal(false);
       } else if (data.virus_total_analysis_id) {
-        console.log('Polling VirusTotal status', data.virus_total_analysis_id);
+        console.log("Polling VirusTotal status", data.virus_total_analysis_id);
         setIsLoadingVirusTotal(true);
         pollVirusTotalStatus(data.virus_total_analysis_id);
       }
-
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unknown error occurred');
+        setError("An unknown error occurred");
       }
     } finally {
       setAnalyzing(false);
@@ -57,19 +60,21 @@ const FileAnalyzer = () => {
   const pollVirusTotalStatus = async (virusTotalId: string) => {
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`${env.VITE_API_URL}/virus_total_status/${virusTotalId}`);
+        const response = await fetch(
+          `${env.VITE_API_URL}/virus_total_status/${virusTotalId}`
+        );
         const data = await response.json();
 
-        if (data.status === 'completed') {
-          setResults(prevResults => ({
+        if (data.status === "completed") {
+          setResults((prevResults) => ({
             ...prevResults,
-            virus_total_analysis: data.virus_total_analysis
+            virus_total_analysis: data.virus_total_analysis,
           }));
           setIsLoadingVirusTotal(false);
           clearInterval(interval);
         }
       } catch (error) {
-        console.error('Error fetching VirusTotal status:', error);
+        console.error("Error fetching VirusTotal status:", error);
         setIsLoadingVirusTotal(false);
         clearInterval(interval);
       }
@@ -81,7 +86,7 @@ const FileAnalyzer = () => {
   const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile?.name.endsWith('.exe')) {
+    if (droppedFile?.name.endsWith(".exe")) {
       setFile(droppedFile);
       await analyzeFile(droppedFile);
     } else {
@@ -95,7 +100,7 @@ const FileAnalyzer = () => {
 
   const handleFileSelect = async (e: FileSelectEvent) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile?.name.endsWith('.exe')) {
+    if (selectedFile?.name.endsWith(".exe")) {
       setFile(selectedFile);
       await analyzeFile(selectedFile);
     } else {
@@ -104,9 +109,15 @@ const FileAnalyzer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8" style={{width: "100%", minWidth: "800px"}}>
-      <div className="max-w-4xl mx-auto space-y-6" style={{width: "100%", minWidth: "800px"}}>
-        <Card style={{width: "100%", minWidth: "800px", minHeight: "400px"}}>
+    <div
+      className="min-h-screen bg-[rgb(27, 37, 46)] p-8"
+      style={{ width: "100%", minWidth: "800px" }}
+    >
+      <div
+        className="max-w-4xl mx-auto space-y-6"
+        style={{ width: "100%", minWidth: "800px" }}
+      >
+        <Card style={{ width: "100%", minWidth: "800px", minHeight: "400px" }}>
           <CardHeader>
             <CardTitle className="text-4xl font-bold text-[#30c48b]">
               EXE File Analyzer
@@ -165,9 +176,9 @@ const FileAnalyzer = () => {
         )}
 
         {results && (
-          <AnalysisResults 
-            results={results} 
-            isLoadingVirusTotal={isLoadingVirusTotal} 
+          <AnalysisResults
+            results={results}
+            isLoadingVirusTotal={isLoadingVirusTotal}
           />
         )}
       </div>
