@@ -7,7 +7,7 @@ import { env } from '../config/env';
 
 
 const FileAnalyzer = () => {
-  const [ _ , setFile] = useState<File | null>(null);
+  const [ file , setFile] = useState<File | null>(null);
   const [results, setResults] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,12 +34,15 @@ const FileAnalyzer = () => {
 
       const data = await response.json();
       setResults(data);
-      
-      if (data.virus_total_analysis_id) {
+
+      if(data.virus_total_analysis) {
+        setIsLoadingVirusTotal(false);
+      } else if (data.virus_total_analysis_id) {
         console.log('Polling VirusTotal status', data.virus_total_analysis_id);
         setIsLoadingVirusTotal(true);
         pollVirusTotalStatus(data.virus_total_analysis_id);
       }
+
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -78,7 +81,7 @@ const FileAnalyzer = () => {
   const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.name.endsWith('.exe')) {
+    if (droppedFile?.name.endsWith('.exe')) {
       setFile(droppedFile);
       await analyzeFile(droppedFile);
     } else {
@@ -92,7 +95,7 @@ const FileAnalyzer = () => {
 
   const handleFileSelect = async (e: FileSelectEvent) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile && selectedFile.name.endsWith('.exe')) {
+    if (selectedFile?.name.endsWith('.exe')) {
       setFile(selectedFile);
       await analyzeFile(selectedFile);
     } else {
@@ -171,3 +174,4 @@ const FileAnalyzer = () => {
 };
 
 export default FileAnalyzer;
+
