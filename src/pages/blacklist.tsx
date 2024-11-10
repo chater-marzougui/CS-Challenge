@@ -25,7 +25,7 @@ interface Post {
 
 const ThreatPostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [ _ , setBlacklistModalOpen] = useState(false);
+  const [_, setBlacklistModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -55,7 +55,7 @@ const ThreatPostList: React.FC = () => {
           },
         ],
       };
-  
+
       console.log("Attempting to fetch posts...");
       const response = await fetch('https://7528-196-203-181-122.ngrok-free.app/evaluate', {
         method: 'POST',
@@ -64,14 +64,14 @@ const ThreatPostList: React.FC = () => {
         },
         body: JSON.stringify(requestBody),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       console.log("Data fetched successfully:", data);
-  
+
       // Assuming response has an array of probabilities and texts, like
       // data.evaluation_results = [{ text: "sample text", probability: 0.85 }, ...]
       const evaluationResults = data.evaluation_results.map((result: any) => {

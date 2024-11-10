@@ -5,6 +5,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import reactLogo from './assets/react.svg';
 import ThreatPostList from './pages/blacklist';
+import Graph from './pages/graph';
 import Rag from './pages/rag';
 import FileAnalyzer from './pages/filaAnalyser';
 import './App.css';
@@ -24,8 +25,10 @@ function App() {
         return <ThreatPostList /> // <ThreatPostList />;
       case 'File analyzer':
         return <FileAnalyzer />;
-      case 'rag':
+      case 'Rag':
         return <Rag />;
+      case 'Graph':
+        return <Graph />;
       default:
         return <Typography variant="h4">Welcome</Typography>;
     }
@@ -57,7 +60,7 @@ function App() {
           </Box>
         </Toolbar>
         <List>
-          {['Dashboard', 'Black List', 'File analyzer', 'rag'].map((text, index) => (
+          {['Dashboard', 'Black List', 'File analyzer', 'Rag', 'Graph'].map((text, index) => (
             <ListItemButton key={text} onClick={() => setPage(text)}>
               <ListItemIcon>
                 {index === 0 ? <HomeIcon /> : index === 1 ? <InfoIcon /> : <SettingsIcon />}
