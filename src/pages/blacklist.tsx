@@ -209,7 +209,7 @@ const ThreatPostList: React.FC = () => {
 
         <Box sx={{ display: "grid", gap: 3 }}>
           {posts.length === 0 ? (
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="aliceblue">
               No blacklisted posts to display.
             </Typography>
           ) : (

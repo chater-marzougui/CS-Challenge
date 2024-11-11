@@ -92,7 +92,7 @@ function App() {
                     <SettingsIcon style={{ color: "white" }} />
                   )}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText style={{ color: "white" }} primary={text} />
               </ListItemButton>
             )
           )}

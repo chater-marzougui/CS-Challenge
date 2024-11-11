@@ -28,7 +28,7 @@ interface Stats {
 }
 
 const getDetectionColor = (stats?: Stats): string => {
-  if (!stats) return 'text-gray-400';
+  if (!stats) return 'text-white';
   const maliciousRatio = stats.malicious / (stats.malicious + stats.undetected);
   if (maliciousRatio > 0.7) return 'text-red-500';
   if (maliciousRatio > 0.3) return 'text-yellow-500';
@@ -48,15 +48,15 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="h-5 w-5 text-blue-500" />
-            <span>File Information</span>
+            <span className="text-[aliceblue]">File Information</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             {Object.entries(results.file_info).map(([key, value]) => (
               <div key={key} className="space-y-1">
-                <p className="text-sm text-gray-500">{key.replace(/_/g, ' ').toUpperCase()}</p>
-                <p className="font-medium">{value}</p>
+                <p className="text-sm text-white">{key.replace(/_/g, ' ').toUpperCase()}</p>
+                <p className="font-medium text-[aliceblue]">{value}</p>
               </div>
             ))}
           </div>
@@ -68,14 +68,14 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Hash className="h-5 w-5 text-purple-500" />
-            <span>File Hashes</span>
+            <span className="text-[aliceblue]">File Hashes</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {Object.entries(results.hashes).map(([key, value]) => (
               <div key={key} className="space-y-1">
-                <p className="text-sm text-gray-500">{key.toUpperCase()}</p>
+                <p className="text-sm text-white">{key.toUpperCase()}</p>
                 <p className="font-mono text-sm bg-gray-50 p-2 rounded">{value}</p>
               </div>
             ))}
@@ -88,11 +88,11 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Brain className="h-5 w-5 text-indigo-500" />
-            <span>Model Analysis</span>
+            <span className="text-[aliceblue]">Model Analysis</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-lg font-medium">{results.model_analysis}</p>
+          <p className="text-lg font-medium text-[aliceblue]">{results.model_analysis}</p>
         </CardContent>
       </Card>
 
@@ -101,7 +101,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Shield className={`h-5 w-5 ${getDetectionColor(results.virus_total_analysis?.data?.attributes?.stats as Stats)}`} />
-            <span>VirusTotal Analysis</span>
+            <span className="text-[aliceblue]">VirusTotal Analysis</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -116,7 +116,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Object.entries(results.virus_total_analysis.data.attributes.stats).map(([key, value]) => (
                   <div key={key} className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-500">{key.replace(/-/g, ' ').toUpperCase()}</p>
+                    <p className="text-sm">{key.replace(/-/g, ' ').toUpperCase()}</p>
                     <p className="text-2xl font-bold">{value}</p>
                   </div>
                 ))}
@@ -134,20 +134,20 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, isLoadingVir
                           <AlertTriangle className={`h-4 w-4 ${result.category === 'malicious' ? 'text-red-500' : 'text-yellow-500'}`} />
                           <p className="font-medium">{engine}</p>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{result.result}</p>
-                        <p className="text-xs text-gray-400 mt-1">Version: {result.engine_version}</p>
+                        <p className="text-sm mt-1">{result.result}</p>
+                        <p className="text-xs mt-1">Version: {result.engine_version}</p>
                       </div>
                     ))}
                 </div>
               </div>
 
               {/* Scan Info */}
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-white">
                 <p>Scan completed: {formatDate(results.virus_total_analysis.data.attributes.date)}</p>
               </div>
             </div>
           ) : (
-            <p className="text-gray-500">No VirusTotal analysis available</p>
+            <p className="text-white">No VirusTotal analysis available</p>
           )}
         </CardContent>
       </Card>
